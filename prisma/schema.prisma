@@ -1,0 +1,54 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+    provider  = "postgresql"
+}
+
+enum EventType {
+  Wedding
+  Engagement
+  Birthday
+  Other
+}
+
+enum LeadStatus {
+  Inquiry
+  FollowUp   @map("Follow-up")
+  Booked
+  DpPaid     @map("DP Paid")
+  Completed
+  Cancelled
+}
+
+model Lead {
+  id           String        @id @default(uuid())
+  customerName String?       @map("customer_name")
+  phone        String?
+  eventDate    DateTime?     @map("event_date") @db.Date
+  location     String?
+  eventType    EventType?    @map("event_type")
+  package      String?
+  theme        String?
+  status       LeadStatus    @default(Inquiry)
+  notes        String?
+  source       String        @default("chatbot")
+  createdAt    DateTime      @default(now()) @map("created_at")
+  updatedAt    DateTime      @updatedAt @map("updated_at")
+  activities   ActivityLog[]
+
+  @@map("leads")
+}
+
+model ActivityLog {
+  id          String   @id @default(uuid())
+  leadId      String   @map("lead_id")
+  action      String
+  details     String?
+  performedBy String   @default("admin") @map("performed_by")
+  createdAt   DateTime @default(now()) @map("created_at")
+  lead        Lead     @relation(fields: [leadId], references: [id], onDelete: Cascade)
+
+  @@map("activity_logs")
+}
