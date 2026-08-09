@@ -12,8 +12,15 @@ export async function proxy(request: NextRequest) {
     supabaseUrl.includes("placeholder.supabase.co") ||
     !supabaseUrl;
 
-  // Jika env masih menggunakan URL demo / placeholder, izinkan akses langsung tanpa cookie loop
-  if (isDemoEnv) {
+  // Jika env masih menggunakan URL demo / placeholder, atau mengakses route publik, izinkan langsung
+  const pathname = request.nextUrl.pathname;
+  if (
+    isDemoEnv ||
+    pathname.startsWith("/login") ||
+    pathname.startsWith("/simulasi") ||
+    pathname.startsWith("/demo") ||
+    pathname.startsWith("/api")
+  ) {
     return supabaseResponse;
   }
 
