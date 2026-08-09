@@ -20,6 +20,7 @@ export default function SimulasiPage() {
     { role: string; content: string }[]
   >([]);
   const [todayFormatted, setTodayFormatted] = useState("");
+  const [simulatedPhone, setSimulatedPhone] = useState("081234567890");
 
   const chatBodyRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
@@ -133,6 +134,12 @@ export default function SimulasiPage() {
       }
 
       const data = await response.json();
+
+      if (data.autoReply === false && !data.reply) {
+        // Lead data is in DB, bot is silent so human admin handles the conversation
+        return;
+      }
+
       const botReply =
         data.reply || "Maaf, saya tidak dapat memproses tanggapan saat ini. 🙏";
 
@@ -176,6 +183,7 @@ export default function SimulasiPage() {
             <h1 className="text-base font-semibold text-[#e9edef] leading-tight truncate">
               Sebelas Decor Chatbot (Simulasi Web)
             </h1>
+          </div>
           <div className="flex items-center gap-2 bg-[#2a3942] px-3 py-1.5 rounded-lg border border-[#3b4a54] shrink-0">
             <span className="text-xs text-[#8696a0]">📱 No. HP:</span>
             <input
