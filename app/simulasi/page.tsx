@@ -9,6 +9,7 @@ interface Message {
   timestamp: string;
 }
 
+const RAG_API_KEY = process.env.NEXT_PUBLIC_RAG_API_KEY;
 const RAG_API_URL =
   process.env.NEXT_PUBLIC_RAG_API_URL || "http://127.0.0.1:5000/api/chat";
 
@@ -66,25 +67,22 @@ export default function SimulasiPage() {
 
   const formatMessageText = (text: string) => {
     // Convert Markdown Image ![alt](url) -> <img>
-    let formatted = text.replace(
-      /!\[(.*?)\]\((.*?)\)/g,
-      (match, alt, url) => {
-        // If image URL is relative (/static/...), prepend RAG host or full URL if needed
-        let fullUrl = url;
-        if (url.startsWith("/static/")) {
-          const ragOrigin = new URL(RAG_API_URL).origin;
-          fullUrl = `${ragOrigin}${url}`;
-        }
-        return `<div style="margin: 8px 0;"><img src="${fullUrl}" alt="${alt}" style="max-width: 100%; max-height: 280px; border-radius: 10px; display: block; box-shadow: 0 4px 12px rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1);" /></div>`;
+    let formatted = text.replace(/!\[(.*?)\]\((.*?)\)/g, (match, alt, url) => {
+      // If image URL is relative (/static/...), prepend RAG host or full URL if needed
+      let fullUrl = url;
+      if (url.startsWith("/static/")) {
+        const ragOrigin = new URL(RAG_API_URL).origin;
+        fullUrl = `${ragOrigin}${url}`;
       }
-    );
+      return `<div style="margin: 8px 0;"><img src="${fullUrl}" alt="${alt}" style="max-width: 100%; max-height: 280px; border-radius: 10px; display: block; box-shadow: 0 4px 12px rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1);" /></div>`;
+    });
 
     // Convert URLs -> <a> links
     formatted = formatted.replace(
       /(https:\/\/[\w\.\/\?\=\&\_\-%]+)/g,
       (url) => {
         return `<a href="${url}" target="_blank" rel="noopener noreferrer" style="color: #53bdeb; text-decoration: underline; word-break: break-all;">${url}</a>`;
-      }
+      },
     );
 
     // Format Bold & Newlines
@@ -114,13 +112,19 @@ export default function SimulasiPage() {
     setInputMessage("");
     setIsLoading(true);
 
-    const updatedHistory = [...chatHistory, { role: "user", content: userText }];
+    const updatedHistory = [
+      ...chatHistory,
+      { role: "user", content: userText },
+    ];
     setChatHistory(updatedHistory);
 
     try {
       const response = await fetch(RAG_API_URL, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          "X-API-KEY": RAG_API_KEY,
+        },
         body: JSON.stringify({
           message: userText,
           history: updatedHistory,
@@ -143,7 +147,10 @@ export default function SimulasiPage() {
       const botReply =
         data.reply || "Maaf, saya tidak dapat memproses tanggapan saat ini. 🙏";
 
-      setChatHistory((prev) => [...prev, { role: "assistant", content: botReply }]);
+      setChatHistory((prev) => [
+        ...prev,
+        { role: "assistant", content: botReply },
+      ]);
 
       setMessages((prev) => [
         ...prev,
@@ -216,7 +223,9 @@ export default function SimulasiPage() {
               Selamat Datang di Simulasi Chatbot Sebelas Decor
             </h2>
             <p className="text-xs text-[#8696a0] leading-relaxed max-w-md mx-auto">
-              Simulasi interaktif asisten virtual AI untuk pengecekan ketersediaan tanggal acara, info pricelist, katalog dekorasi, dan pendaftaran lead otomatis.
+              Simulasi interaktif asisten virtual AI untuk pengecekan
+              ketersediaan tanggal acara, info pricelist, katalog dekorasi, dan
+              pendaftaran lead otomatis.
             </p>
           </div>
 
