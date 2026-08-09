@@ -9,7 +9,7 @@ interface Message {
   timestamp: string;
 }
 
-const RAG_API_KEY = process.env.NEXT_PUBLIC_RAG_API_KEY;
+const RAG_API_KEY = process.env.NEXT_PUBLIC_RAG_API_KEY || "";
 const RAG_API_URL =
   process.env.NEXT_PUBLIC_RAG_API_URL || "http://127.0.0.1:5000/api/chat";
 
