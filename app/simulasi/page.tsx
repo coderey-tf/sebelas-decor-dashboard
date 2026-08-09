@@ -90,7 +90,7 @@ export default function SimulasiPage() {
     formatted = formatted
       .replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>")
       .replace(/\n- /g, "\n• ")
-      .replace(/\n/g, "<br>");
+      .replace(/\n/g, "<br/>");
 
     return formatted;
   };
@@ -123,6 +123,8 @@ export default function SimulasiPage() {
         body: JSON.stringify({
           message: userText,
           history: updatedHistory,
+          phone: simulatedPhone, // Pass unique WhatsApp key
+          source: "whatsapp_simulator",
         }),
       });
 
@@ -174,10 +176,16 @@ export default function SimulasiPage() {
             <h1 className="text-base font-semibold text-[#e9edef] leading-tight truncate">
               Sebelas Decor Chatbot (Simulasi Web)
             </h1>
-            <div className="text-xs text-[#00a884] flex items-center gap-1.5 mt-0.5">
-              <span className="w-2 h-2 rounded-full bg-[#00a884] animate-pulse" />
-              Online — Siap Membantu
-            </div>
+          <div className="flex items-center gap-2 bg-[#2a3942] px-3 py-1.5 rounded-lg border border-[#3b4a54] shrink-0">
+            <span className="text-xs text-[#8696a0]">📱 No. HP:</span>
+            <input
+              type="text"
+              value={simulatedPhone}
+              onChange={(e) => setSimulatedPhone(e.target.value)}
+              placeholder="0812..."
+              className="bg-transparent text-xs text-[#e9edef] w-28 font-mono outline-none focus:text-white"
+              title="Simulasi Nomor WhatsApp Pengguna"
+            />
           </div>
         </header>
 
