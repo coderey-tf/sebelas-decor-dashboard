@@ -9,6 +9,7 @@ import {
   Settings,
   LogOut,
   Sparkles,
+  MessageSquare,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { createClient } from "@/lib/supabase/client";
@@ -18,6 +19,7 @@ const navigation = [
   { name: "Overview", href: "/dashboard", icon: LayoutDashboard },
   { name: "Leads & Bookings", href: "/dashboard/leads", icon: Users },
   { name: "Kalender Acara", href: "/dashboard/calendar", icon: Calendar },
+  { name: "Connect WhatsApp", href: "/dashboard/whatsapp", icon: MessageSquare },
   { name: "Pengaturan", href: "/dashboard/settings", icon: Settings },
 ];
 
